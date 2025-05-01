@@ -1,0 +1,94 @@
+# File: conduktor_signup_test.yaml
+version: 1.0
+name: Conduktor Get Started Form Test
+description: Verifies the signup form submission flow on conduktor.io/get-started
+
+variables:
+  timestamp: '{{ Date.now() }}' # Generate a timestamp for unique email
+  userEmail: 'test-user+{{ timestamp }}@magnitude-example.com' # Construct unique email
+
+scenarios:
+  - name: Fill and Submit Get Started Form
+    steps:
+      - description: Navigate to the Get Started page
+        action: navigate
+        url: https://conduktor.io/get-started
+        # Add a wait/timeout if the page loads slowly
+        # timeout: 10000
+
+      - description: Fill First Name
+        action: type
+        # VERIFY THIS SELECTOR
+        selector: "input[name='firstname']"
+        text: "Test"
+        # Add delay if typing is too fast for the page scripts
+        # delay: 100
+
+      - description: Fill Last Name
+        action: type
+        # VERIFY THIS SELECTOR
+        selector: "input[name='lastname']"
+        text: "User"
+        # delay: 100
+
+      - description: Fill Work Email
+        action: type
+        # VERIFY THIS SELECTOR
+        selector: "input[name='email']"
+        text: "{{ userEmail }}" # Use the unique email variable
+        # delay: 100
+
+      - description: Fill Company Name
+        action: type
+        # VERIFY THIS SELECTOR
+        selector: "input[name='company']"
+        text: "Magnitude Test Corp"
+        # delay: 100
+
+      - description: Fill Job Title
+        action: type
+        # VERIFY THIS SELECTOR
+        selector: "input[name='jobtitle']"
+        text: "QA Tester"
+        # delay: 100
+
+      # --- Checkbox Step ---
+      # This selector is a GUESS based on common HubSpot patterns.
+      # VERIFY THIS SELECTOR on the actual page. There might be multiple checkboxes.
+      # Use 'check' for standard inputs, 'click' might be needed for custom elements.
+      - description: Accept Terms and Conditions (Example)
+        action: check
+        selector: "input[type='checkbox'][name='LEGAL_CONSENT.processing']"
+        # timeout: 5000 # Add timeout if needed
+
+      # --- Submit Button ---
+      - description: Click the Submit button
+        action: click
+        # VERIFY THIS SELECTOR - It might be more specific, e.g., containing text "Get Started"
+        selector: "button[type='submit']"
+        # timeout: 5000
+
+      # --- Verification Step ---
+      # This verifies that *an* H1 tag is visible after submission.
+      # VERIFY THE ACTUAL SUCCESS CONDITION. It could be:
+      # 1. A specific element appearing (e.g., a div with class 'success-message')
+      # 2. Specific text appearing (e.g., "Check your inbox") -> use assertText
+      # 3. Navigation to a new URL -> use assertUrl
+      - description: Verify success state (e.g., success message heading appears)
+        action: assertVisible
+        # VERIFY THIS SELECTOR - This assumes the main heading indicates success.
+        selector: "h1"
+        # Increase timeout significantly to allow for form processing and page update/redirect
+        timeout: 15000
+
+      # --- Alternative/Additional Verifications (Examples - Uncomment and modify as needed) ---
+      # - description: Verify specific success text
+      #   action: assertText
+      #   selector: "div.success-message"  # VERIFY SELECTOR
+      #   text: "Thank you for signing up!" # VERIFY TEXT
+      #   timeout: 15000
+      #
+      # - description: Verify navigation to thank you page
+      #   action: assertUrl
+      #   expected: "https://conduktor.io/thank-you" # VERIFY URL
+      #   timeout: 15000
